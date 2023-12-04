@@ -1,0 +1,11 @@
+[package]
+name = "advent-of-code-2023"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "advent-of-code-2023"
+path = "src/main.rs"
+
+[dependencies]
+inquire = "0.6.2"
