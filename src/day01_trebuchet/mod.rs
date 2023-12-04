@@ -21,6 +21,10 @@ fn solve_line(line: &String) -> u32 {
 }
 
 impl Solution for Day01 {
+    fn name(&self) -> &str {
+        "day01_trebuchet"
+    }
+
     fn solve(&self, lines: &Vec<String>) -> String {
         return lines.iter().map(solve_line).sum::<u32>().to_string();
     }
