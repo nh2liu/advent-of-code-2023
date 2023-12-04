@@ -8,7 +8,7 @@ fn solve_line(line: &String) -> u32 {
     let mut last_char = Option::None;
 
     for c in line.chars() {
-        if c >= '0' && c <= '9' {
+        if c.is_digit(10) {
             if first_char.is_none() {
                 first_char = Some(c);
             }
