@@ -4,6 +4,7 @@ use itertools::Itertools;
 use std::cmp::{max, min};
 
 pub struct Day05_1;
+pub struct Day05_2;
 
 struct RangeMap {
     ranges: Vec<(u64, u64, u64)>,
@@ -83,19 +84,10 @@ impl RangeMap {
     }
 }
 
-fn parse_file(lines: &Vec<String>) -> (Vec<u64>, Vec<RangeMap>) {
-    // seeds
-    let (_, seeds_line) = lines[0].split_once(':').unwrap();
-    let seeds: Vec<u64> = seeds_line
-        .trim()
-        .split_whitespace()
-        .map(|s| s.parse::<u64>().unwrap())
-        .collect();
-    println!("seeds: {:?}", seeds);
-
+fn parse_maps(lines: &Vec<String>) -> Vec<RangeMap> {
     let mut rmaps = Vec::new();
     let mut ranges = Vec::new();
-    for line in &lines[2..] {
+    for line in lines {
         if line.is_empty() {
             continue;
         } else if line.contains("map:") {
@@ -114,7 +106,7 @@ fn parse_file(lines: &Vec<String>) -> (Vec<u64>, Vec<RangeMap>) {
         println!("ranges: {:?}", ranges);
         rmaps.push(RangeMap::new(&ranges));
     }
-    return (seeds, rmaps);
+    return rmaps;
 }
 
 fn chain_map(seed: u64, maps: &Vec<RangeMap>) -> u64 {
@@ -129,10 +121,52 @@ impl Solution for Day05_1 {
         "day05_fertilizer"
     }
     fn solve(&self, lines: &Vec<String>) -> String {
-        let (seeds, maps) = parse_file(lines);
+        let (_, seeds_line) = lines[0].split_once(':').unwrap();
+        let seeds: Vec<u64> = seeds_line
+            .trim()
+            .split_whitespace()
+            .map(|s| s.parse::<u64>().unwrap())
+            .collect();
+        println!("seeds: {:?}", seeds);
+        let maps = parse_maps(&lines[2..].to_vec());
         return seeds
             .iter()
             .map(|seed| chain_map(*seed, &maps))
+            .min()
+            .unwrap()
+            .to_string();
+    }
+}
+
+fn chain_map_range(start_range: (u64, u64), maps: &Vec<RangeMap>) -> Vec<(u64, u64)> {
+    return maps.iter().fold(vec![start_range], |acc, map| {
+        println!("seed: {:?} | acc: {:?}", start_range, acc);
+        map.chain_range(&acc)
+    });
+}
+
+impl Solution for Day05_2 {
+    fn name(&self) -> &str {
+        "day05_fertilizer"
+    }
+    fn solve(&self, lines: &Vec<String>) -> String {
+        let (_, seeds_line) = lines[0].split_once(':').unwrap();
+        let seed_values: Vec<u64> = seeds_line
+            .trim()
+            .split_whitespace()
+            .map(|s| s.parse::<u64>().unwrap())
+            .collect();
+        let mut seed_ranges = Vec::new();
+        for i in 0..seed_values.len() / 2 {
+            let start = seed_values[2 * i];
+            seed_ranges.push((start, start + seed_values[2 * i + 1]));
+        }
+        println!("seeds: {:?}", seed_ranges);
+        let maps = parse_maps(&lines[2..].to_vec());
+        return seed_ranges
+            .iter()
+            .map(|seed| chain_map_range(*seed, &maps))
+            .map(|ranges| ranges[0].0)
             .min()
             .unwrap()
             .to_string();
