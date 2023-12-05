@@ -2,6 +2,7 @@ mod day01_trebuchet;
 mod day02_cube_conundrum;
 mod day03_gear_ratios;
 mod day04_scratchcards;
+mod day05_fertilizer;
 
 mod utils;
 
@@ -28,6 +29,7 @@ fn main() {
         ("day03_2", &day03_gear_ratios::Day03_2 as &dyn Solution),
         ("day04_1", &day04_scratchcards::Day04_1 as &dyn Solution),
         ("day04_2", &day04_scratchcards::Day04_2 as &dyn Solution),
+        ("day05_1", &day05_fertilizer::Day05_1 as &dyn Solution),
     ]
     .iter()
     .cloned()
