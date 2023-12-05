@@ -3,6 +3,7 @@ use std::collections::HashSet;
 use crate::utils::Solution;
 
 pub struct Day03_1;
+pub struct Day03_2;
 
 fn is_symbol(c: char) -> bool {
     !(c.is_digit(10) || c == '.')
@@ -65,36 +66,71 @@ fn create_first_letter_grid(grid: &Vec<Vec<char>>) -> Vec<Vec<Option<usize>>> {
     return matrix;
 }
 
-fn solve_grid(grid: &Vec<Vec<char>>) -> u32 {
-    let fl_grid = create_first_letter_grid(grid);
-
-    let mut parts = HashSet::new();
-    for (m, row) in grid.iter().enumerate() {
-        for (n, c) in row.iter().enumerate() {
-            if is_symbol(*c) {
-                for (i, j) in get_adjacent_cells(m, n, grid) {
-                    if fl_grid[i][j].is_some() {
-                        parts.insert((i, fl_grid[i][j].unwrap()));
-                    }
-                }
-            }
-        }
-    }
-    return parts.iter().map(|(m, n)| parse_num_at(*m, *n, grid)).sum();
-}
-
 impl Solution for Day03_1 {
     fn name(&self) -> &str {
         "day03_gear_ratios"
     }
 
     fn solve(&self, lines: &Vec<String>) -> String {
-        return solve_grid(
-            &lines
-                .iter()
-                .map(|s| s.chars().collect::<Vec<char>>())
-                .collect(),
-        )
-        .to_string();
+        let grid = &lines
+            .iter()
+            .map(|s| s.chars().collect::<Vec<char>>())
+            .collect();
+        let fl_grid = create_first_letter_grid(grid);
+
+        let mut parts = HashSet::new();
+        for (m, row) in grid.iter().enumerate() {
+            for (n, c) in row.iter().enumerate() {
+                if is_symbol(*c) {
+                    for (i, j) in get_adjacent_cells(m, n, grid) {
+                        if fl_grid[i][j].is_some() {
+                            parts.insert((i, fl_grid[i][j].unwrap()));
+                        }
+                    }
+                }
+            }
+        }
+        return parts
+            .iter()
+            .map(|(m, n)| parse_num_at(*m, *n, grid))
+            .sum::<u32>()
+            .to_string();
+    }
+}
+
+impl Solution for Day03_2 {
+    fn name(&self) -> &str {
+        "day03_gear_ratios"
+    }
+
+    fn solve(&self, lines: &Vec<String>) -> String {
+        let grid = &lines
+            .iter()
+            .map(|s| s.chars().collect::<Vec<char>>())
+            .collect();
+        let fl_grid = create_first_letter_grid(grid);
+        let mut running_sum = 0;
+        for (m, row) in grid.iter().enumerate() {
+            for (n, c) in row.iter().enumerate() {
+                if *c == '*' {
+                    let mut parts: HashSet<(usize, usize)> = HashSet::new();
+
+                    for (i, j) in get_adjacent_cells(m, n, grid) {
+                        if fl_grid[i][j].is_some() {
+                            parts.insert((i, fl_grid[i][j].unwrap()));
+                        }
+                    }
+                    if parts.len() == 2 {
+                        let gear_ratio: i32 = parts
+                            .iter()
+                            .cloned()
+                            .map(|(m, n)| parse_num_at(m, n, grid) as i32)
+                            .product();
+                        running_sum += gear_ratio;
+                    }
+                }
+            }
+        }
+        return running_sum.to_string();
     }
 }
