@@ -1,7 +1,10 @@
+use std::collections::HashMap;
+
 //mod utils;
 use crate::utils::Solution;
 
-pub struct Day01;
+pub struct Day01_1;
+pub struct Day01_2;
 
 fn solve_line(line: &String) -> u32 {
     let mut first_char = Option::None;
@@ -20,12 +23,61 @@ fn solve_line(line: &String) -> u32 {
     return first_digit * 10 + last_digit;
 }
 
-impl Solution for Day01 {
+impl Solution for Day01_1 {
     fn name(&self) -> &str {
         "day01_trebuchet"
     }
 
     fn solve(&self, lines: &Vec<String>) -> String {
         return lines.iter().map(solve_line).sum::<u32>().to_string();
+    }
+}
+
+fn solve_line2(line: &String) -> u32 {
+    let value_map: HashMap<&str, u32> = vec![
+        ("1", 1),
+        ("2", 2),
+        ("3", 3),
+        ("4", 4),
+        ("5", 5),
+        ("6", 6),
+        ("7", 7),
+        ("8", 8),
+        ("9", 9),
+        ("one", 1),
+        ("two", 2),
+        ("three", 3),
+        ("four", 4),
+        ("five", 5),
+        ("six", 6),
+        ("seven", 7),
+        ("eight", 8),
+        ("nine", 9),
+    ]
+    .iter()
+    .cloned()
+    .collect();
+    let (first_digit, _) = value_map
+        .iter()
+        .map(|(s, v)| (v, line.find(s)))
+        .filter(|(_, index)| index.is_some())
+        .min_by_key(|(_, index)| index.unwrap())
+        .unwrap();
+    let (last_digit, _) = value_map
+        .iter()
+        .map(|(s, v)| (v, line.rfind(s)))
+        .filter(|(_, index)| index.is_some())
+        .max_by_key(|(_, index)| index.unwrap())
+        .unwrap();
+    return first_digit * 10 + last_digit;
+}
+
+impl Solution for Day01_2 {
+    fn name(&self) -> &str {
+        "day01_trebuchet"
+    }
+
+    fn solve(&self, lines: &Vec<String>) -> String {
+        return lines.iter().map(solve_line2).sum::<u32>().to_string();
     }
 }
