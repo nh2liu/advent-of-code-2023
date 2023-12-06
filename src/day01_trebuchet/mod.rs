@@ -6,12 +6,12 @@ use crate::utils::Solution;
 pub struct Day01_1;
 pub struct Day01_2;
 
-fn solve_line(line: &String) -> u32 {
+fn solve_line(line: &str) -> u32 {
     let mut first_char = Option::None;
     let mut last_char = Option::None;
 
     for c in line.chars() {
-        if c.is_digit(10) {
+        if c.is_ascii_digit() {
             if first_char.is_none() {
                 first_char = Some(c);
             }
@@ -20,7 +20,7 @@ fn solve_line(line: &String) -> u32 {
     }
     let first_digit = first_char.unwrap().to_digit(10).unwrap();
     let last_digit = last_char.unwrap().to_digit(10).unwrap();
-    return first_digit * 10 + last_digit;
+    first_digit * 10 + last_digit
 }
 
 impl Solution for Day01_1 {
@@ -28,12 +28,16 @@ impl Solution for Day01_1 {
         "day01_trebuchet"
     }
 
-    fn solve(&self, lines: &Vec<String>) -> String {
-        return lines.iter().map(solve_line).sum::<u32>().to_string();
+    fn solve(&self, lines: &[String]) -> String {
+        return lines
+            .iter()
+            .map(|s| solve_line(s.as_str()))
+            .sum::<u32>()
+            .to_string();
     }
 }
 
-fn solve_line2(line: &String) -> u32 {
+fn solve_line2(line: &str) -> u32 {
     let value_map: HashMap<&str, u32> = vec![
         ("1", 1),
         ("2", 2),
@@ -69,7 +73,7 @@ fn solve_line2(line: &String) -> u32 {
         .filter(|(_, index)| index.is_some())
         .max_by_key(|(_, index)| index.unwrap())
         .unwrap();
-    return first_digit * 10 + last_digit;
+    first_digit * 10 + last_digit
 }
 
 impl Solution for Day01_2 {
@@ -77,7 +81,11 @@ impl Solution for Day01_2 {
         "day01_trebuchet"
     }
 
-    fn solve(&self, lines: &Vec<String>) -> String {
-        return lines.iter().map(solve_line2).sum::<u32>().to_string();
+    fn solve(&self, lines: &[String]) -> String {
+        return lines
+            .iter()
+            .map(|s| solve_line2(s.as_str()))
+            .sum::<u32>()
+            .to_string();
     }
 }

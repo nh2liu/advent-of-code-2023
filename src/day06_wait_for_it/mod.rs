@@ -18,20 +18,19 @@ fn count_ways(time: u64, record: u64) -> u64 {
         "{} {} | {:.2} {:.2} {} ",
         time, record, left_bound, right_bound, n_ways
     );
-    return n_ways;
+    n_ways
 }
 
 impl Solution for Day06_1 {
     fn name(&self) -> &str {
         "day06_wait_for_it"
     }
-    fn solve(&self, lines: &Vec<String>) -> String {
+    fn solve(&self, lines: &[String]) -> String {
         let parsed = lines
             .iter()
             .map(|x| {
                 let (_, line) = x.split_once(':').unwrap();
-                line.trim()
-                    .split_whitespace()
+                line.split_whitespace()
                     .map(|x| x.parse::<u64>().unwrap())
                     .collect_vec()
             })
@@ -50,15 +49,15 @@ impl Solution for Day06_2 {
     fn name(&self) -> &str {
         "day06_wait_for_it"
     }
-    fn solve(&self, lines: &Vec<String>) -> String {
+    fn solve(&self, lines: &[String]) -> String {
         let parsed = lines
             .iter()
             .map(|x| {
                 let (_, line) = x.split_once(':').unwrap();
-                line.replace(" ", "").parse::<u64>().unwrap()
+                line.replace(' ', "").parse::<u64>().unwrap()
             })
             .collect_vec();
         let (time, record) = (&parsed[0], &parsed[1]);
-        return count_ways(*time, *record).to_string();
+        count_ways(*time, *record).to_string()
     }
 }

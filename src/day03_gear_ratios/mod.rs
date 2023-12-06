@@ -6,11 +6,11 @@ pub struct Day03_1;
 pub struct Day03_2;
 
 fn is_symbol(c: char) -> bool {
-    !(c.is_digit(10) || c == '.')
+    !(c.is_ascii_digit() || c == '.')
 }
 
-fn get_adjacent_cells(m: usize, n: usize, grid: &Vec<Vec<char>>) -> Vec<(usize, usize)> {
-    let deltas = vec![
+fn get_adjacent_cells(m: usize, n: usize, grid: &[Vec<char>]) -> Vec<(usize, usize)> {
+    let deltas = [
         (-1, -1),
         (-1, 0),
         (-1, 1),
@@ -30,28 +30,28 @@ fn get_adjacent_cells(m: usize, n: usize, grid: &Vec<Vec<char>>) -> Vec<(usize, 
         .collect();
 }
 
-fn parse_num_at(m: usize, n: usize, grid: &Vec<Vec<char>>) -> u32 {
+fn parse_num_at(m: usize, n: usize, grid: &[Vec<char>]) -> u32 {
     let mut num = 0;
     for i in n..grid[0].len() {
         let c = grid[m][i];
-        if !c.is_digit(10) {
+        if !c.is_ascii_digit() {
             break;
         }
         num = num * 10 + c.to_digit(10).unwrap();
     }
-    return num;
+    num
 }
 
 fn create_first_letter_grid(grid: &Vec<Vec<char>>) -> Vec<Vec<Option<usize>>> {
     let m = grid.len();
     let n = grid[0].len();
     let mut matrix: Vec<Vec<Option<usize>>> = Vec::with_capacity(m);
-    for i in 0..m {
+    for grid_row in grid.iter().take(m) {
         let mut row = Vec::with_capacity(n);
         let mut start_idx = None;
-        for j in 0..n {
+        for (j, c) in grid_row.iter().take(n).enumerate() {
             // Tracking the first index of the string.
-            if grid[i][j].is_digit(10) {
+            if c.is_ascii_digit() {
                 if start_idx.is_none() {
                     start_idx = Some(j);
                 }
@@ -63,7 +63,7 @@ fn create_first_letter_grid(grid: &Vec<Vec<char>>) -> Vec<Vec<Option<usize>>> {
         }
         matrix.push(row);
     }
-    return matrix;
+    matrix
 }
 
 impl Solution for Day03_1 {
@@ -71,7 +71,7 @@ impl Solution for Day03_1 {
         "day03_gear_ratios"
     }
 
-    fn solve(&self, lines: &Vec<String>) -> String {
+    fn solve(&self, lines: &[String]) -> String {
         let grid = &lines
             .iter()
             .map(|s| s.chars().collect::<Vec<char>>())
@@ -103,7 +103,7 @@ impl Solution for Day03_2 {
         "day03_gear_ratios"
     }
 
-    fn solve(&self, lines: &Vec<String>) -> String {
+    fn solve(&self, lines: &[String]) -> String {
         let grid = &lines
             .iter()
             .map(|s| s.chars().collect::<Vec<char>>())
@@ -131,6 +131,6 @@ impl Solution for Day03_2 {
                 }
             }
         }
-        return running_sum.to_string();
+        running_sum.to_string()
     }
 }

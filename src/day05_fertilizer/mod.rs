@@ -11,7 +11,7 @@ struct RangeMap {
 }
 
 fn collapse_ranges(ranges: &Vec<(u64, u64)>) -> Vec<(u64, u64)> {
-    if ranges.len() == 0 {
+    if ranges.is_empty() {
         return Vec::new();
     };
     let mut ret = vec![ranges[0]];
@@ -24,11 +24,11 @@ fn collapse_ranges(ranges: &Vec<(u64, u64)>) -> Vec<(u64, u64)> {
             ret.push((start, end));
         }
     }
-    return ret;
+    ret
 }
 
 impl RangeMap {
-    pub fn new(ranges: &Vec<(u64, u64, u64)>) -> Self {
+    pub fn new(ranges: &[(u64, u64, u64)]) -> Self {
         return Self {
             ranges: ranges
                 .iter()
@@ -38,20 +38,19 @@ impl RangeMap {
         };
     }
 
-    pub fn chain_range(&self, ranges: &Vec<(u64, u64)>) -> Vec<(u64, u64)> {
+    pub fn chain_range(&self, ranges: &[(u64, u64)]) -> Vec<(u64, u64)> {
         let mut mapped_ranges = ranges
             .iter()
-            .map(|(start, end)| self.get_range(*start, *end))
-            .flatten()
+            .flat_map(|(start, end)| self.get_range(*start, *end))
             .collect_vec();
         mapped_ranges.sort_by_key(|(start, _)| *start);
-        return collapse_ranges(&mapped_ranges);
+        collapse_ranges(&mapped_ranges)
     }
 
     pub fn get(&self, e: u64) -> u64 {
         let range = self.get_range(e, e + 1);
         assert!(range.len() == 1, "Should return 1 element.");
-        return range[0].0;
+        range[0].0
     }
 
     pub fn get_range(&self, start: u64, end: u64) -> Vec<(u64, u64)> {
@@ -80,11 +79,11 @@ impl RangeMap {
             // 1-1s for range above the map.
             ret.push((cur, end));
         }
-        return ret;
+        ret
     }
 }
 
-fn parse_maps(lines: &Vec<String>) -> Vec<RangeMap> {
+fn parse_maps(lines: &[String]) -> Vec<RangeMap> {
     let mut rmaps = Vec::new();
     let mut ranges = Vec::new();
     for line in lines {
@@ -106,10 +105,10 @@ fn parse_maps(lines: &Vec<String>) -> Vec<RangeMap> {
         println!("ranges: {:?}", ranges);
         rmaps.push(RangeMap::new(&ranges));
     }
-    return rmaps;
+    rmaps
 }
 
-fn chain_map(seed: u64, maps: &Vec<RangeMap>) -> u64 {
+fn chain_map(seed: u64, maps: &[RangeMap]) -> u64 {
     return maps.iter().fold(seed, |acc, map| {
         println!("seed: {} | acc: {}", seed, acc);
         map.get(acc)
@@ -120,15 +119,14 @@ impl Solution for Day05_1 {
     fn name(&self) -> &str {
         "day05_fertilizer"
     }
-    fn solve(&self, lines: &Vec<String>) -> String {
+    fn solve(&self, lines: &[String]) -> String {
         let (_, seeds_line) = lines[0].split_once(':').unwrap();
         let seeds: Vec<u64> = seeds_line
-            .trim()
             .split_whitespace()
             .map(|s| s.parse::<u64>().unwrap())
             .collect();
         println!("seeds: {:?}", seeds);
-        let maps = parse_maps(&lines[2..].to_vec());
+        let maps = parse_maps(&lines[2..]);
         return seeds
             .iter()
             .map(|seed| chain_map(*seed, &maps))
@@ -138,7 +136,7 @@ impl Solution for Day05_1 {
     }
 }
 
-fn chain_map_range(start_range: (u64, u64), maps: &Vec<RangeMap>) -> Vec<(u64, u64)> {
+fn chain_map_range(start_range: (u64, u64), maps: &[RangeMap]) -> Vec<(u64, u64)> {
     return maps.iter().fold(vec![start_range], |acc, map| {
         println!("seed: {:?} | acc: {:?}", start_range, acc);
         map.chain_range(&acc)
@@ -149,10 +147,9 @@ impl Solution for Day05_2 {
     fn name(&self) -> &str {
         "day05_fertilizer"
     }
-    fn solve(&self, lines: &Vec<String>) -> String {
+    fn solve(&self, lines: &[String]) -> String {
         let (_, seeds_line) = lines[0].split_once(':').unwrap();
         let seed_values: Vec<u64> = seeds_line
-            .trim()
             .split_whitespace()
             .map(|s| s.parse::<u64>().unwrap())
             .collect();
@@ -162,7 +159,7 @@ impl Solution for Day05_2 {
             seed_ranges.push((start, start + seed_values[2 * i + 1]));
         }
         println!("seeds: {:?}", seed_ranges);
-        let maps = parse_maps(&lines[2..].to_vec());
+        let maps = parse_maps(&lines[2..]);
         return seed_ranges
             .iter()
             .map(|seed| chain_map_range(*seed, &maps))
