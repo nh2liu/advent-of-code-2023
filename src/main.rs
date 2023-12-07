@@ -4,6 +4,7 @@ mod day03_gear_ratios;
 mod day04_scratchcards;
 mod day05_fertilizer;
 mod day06_wait_for_it;
+mod day07_camel_cards;
 
 mod utils;
 
@@ -35,6 +36,7 @@ fn main() {
         ("day05_2", &day05_fertilizer::Day05_2 as &dyn Solution),
         ("day06_1", &day06_wait_for_it::Day06_1 as &dyn Solution),
         ("day06_2", &day06_wait_for_it::Day06_2 as &dyn Solution),
+        ("day07_1", &day07_camel_cards::Day07_1 as &dyn Solution),
     ]
     .iter()
     .cloned()
