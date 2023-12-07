@@ -37,6 +37,7 @@ fn main() {
         ("day06_1", &day06_wait_for_it::Day06_1 as &dyn Solution),
         ("day06_2", &day06_wait_for_it::Day06_2 as &dyn Solution),
         ("day07_1", &day07_camel_cards::Day07_1 as &dyn Solution),
+        ("day07_2", &day07_camel_cards::Day07_2 as &dyn Solution),
     ]
     .iter()
     .cloned()
