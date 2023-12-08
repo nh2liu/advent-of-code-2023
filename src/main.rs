@@ -43,6 +43,10 @@ fn main() {
             "day08_1",
             &day08_haunted_wasteland::Day08_1 as &dyn Solution,
         ),
+        (
+            "day08_2",
+            &day08_haunted_wasteland::Day08_2 as &dyn Solution,
+        ),
     ]
     .iter()
     .cloned()

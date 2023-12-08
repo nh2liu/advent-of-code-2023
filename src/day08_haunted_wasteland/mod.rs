@@ -1,8 +1,11 @@
 use std::collections::HashMap;
 
 use crate::utils::Solution;
+use itertools::Itertools;
+use num::integer::lcm;
 
 pub struct Day08_1;
+pub struct Day08_2;
 
 fn parse(lines: &[String]) -> (&str, HashMap<&str, (&str, &str)>) {
     let seq = lines[0].as_str();
@@ -39,5 +42,45 @@ impl Solution for Day08_1 {
             n += 1;
         }
         n.to_string()
+    }
+}
+
+fn findz<'a>(
+    entry_node: &'a str,
+    seq: &str,
+    nodes: &'a HashMap<&str, (&str, &str)>,
+) -> (&'a str, (usize, u64)) {
+    let mut cur_node = entry_node;
+    for (n, (i, s)) in (0_u64..).zip(seq.chars().enumerate().cycle()) {
+        if cur_node.ends_with('Z') {
+            return (cur_node, (i, n));
+        }
+
+        let options = nodes[cur_node];
+        cur_node = match s {
+            'L' => options.0,
+            'R' => options.1,
+            _ => panic!("Invalid char for step {}", s),
+        };
+    }
+    panic!("Cannot be reached.")
+}
+
+impl Solution for Day08_2 {
+    fn name(&self) -> &str {
+        "day08_haunted_wasteland"
+    }
+    fn solve(&self, lines: &[String]) -> String {
+        // misworded question, only works because cycle len.
+        let (seq, nodes) = parse(lines);
+        println!("{}", seq.len());
+        let cur_nodes: Vec<&str> = nodes.keys().filter(|x| x.ends_with('A')).cloned().collect();
+        let steps = cur_nodes
+            .into_iter()
+            .map(|node| findz(node, seq, &nodes))
+            .collect_vec();
+        println!("{:?}", steps);
+        let cycle_lcm = steps.iter().map(|(_, (_, e))| *e).reduce(lcm).unwrap();
+        cycle_lcm.to_string()
     }
 }
