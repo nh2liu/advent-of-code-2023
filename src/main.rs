@@ -5,6 +5,7 @@ mod day04_scratchcards;
 mod day05_fertilizer;
 mod day06_wait_for_it;
 mod day07_camel_cards;
+mod day08_haunted_wasteland;
 
 mod utils;
 
@@ -38,6 +39,10 @@ fn main() {
         ("day06_2", &day06_wait_for_it::Day06_2 as &dyn Solution),
         ("day07_1", &day07_camel_cards::Day07_1 as &dyn Solution),
         ("day07_2", &day07_camel_cards::Day07_2 as &dyn Solution),
+        (
+            "day08_1",
+            &day08_haunted_wasteland::Day08_1 as &dyn Solution,
+        ),
     ]
     .iter()
     .cloned()
