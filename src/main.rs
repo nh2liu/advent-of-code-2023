@@ -6,6 +6,7 @@ mod day05_fertilizer;
 mod day06_wait_for_it;
 mod day07_camel_cards;
 mod day08_haunted_wasteland;
+mod day09_mirage_maintenance;
 
 mod utils;
 
@@ -46,6 +47,10 @@ fn main() {
         (
             "day08_2",
             &day08_haunted_wasteland::Day08_2 as &dyn Solution,
+        ),
+        (
+            "day09_1",
+            &day09_mirage_maintenance::Day09_1 as &dyn Solution,
         ),
     ]
     .iter()
