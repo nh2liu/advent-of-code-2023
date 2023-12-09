@@ -52,6 +52,10 @@ fn main() {
             "day09_1",
             &day09_mirage_maintenance::Day09_1 as &dyn Solution,
         ),
+        (
+            "day09_2",
+            &day09_mirage_maintenance::Day09_2 as &dyn Solution,
+        ),
     ]
     .iter()
     .cloned()
