@@ -32,21 +32,25 @@ fn pred_before(v: &[i32]) -> i32 {
     s
 }
 
+fn solve(lines: &[String], solver: fn(&[i32]) -> i32) -> i32 {
+    let ans = lines
+        .iter()
+        .map(|line| {
+            line.split_whitespace()
+                .map(|x| x.parse::<i32>().unwrap())
+                .collect_vec()
+        })
+        .map(|v| (solver(&v), v))
+        .collect_vec();
+    ans.iter().map(|(s, _)| s).sum::<i32>()
+}
+
 impl Solution for Day09_1 {
     fn name(&self) -> &str {
         "day09_mirage_maintenance"
     }
     fn solve(&self, lines: &[String]) -> String {
-        let ans = lines
-            .iter()
-            .map(|line| {
-                line.split_whitespace()
-                    .map(|x| x.parse::<i32>().unwrap())
-                    .collect_vec()
-            })
-            .map(|v| (pred_next(&v), v))
-            .collect_vec();
-        ans.iter().map(|(s, _)| s).sum::<i32>().to_string()
+        solve(lines, pred_next).to_string()
     }
 }
 
@@ -55,15 +59,6 @@ impl Solution for Day09_2 {
         "day09_mirage_maintenance"
     }
     fn solve(&self, lines: &[String]) -> String {
-        let ans = lines
-            .iter()
-            .map(|line| {
-                line.split_whitespace()
-                    .map(|x| x.parse::<i32>().unwrap())
-                    .collect_vec()
-            })
-            .map(|v| (pred_before(&v), v))
-            .collect_vec();
-        ans.iter().map(|(s, _)| s).sum::<i32>().to_string()
+        solve(lines, pred_before).to_string()
     }
 }
