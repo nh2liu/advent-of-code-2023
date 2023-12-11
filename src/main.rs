@@ -7,6 +7,7 @@ mod day06_wait_for_it;
 mod day07_camel_cards;
 mod day08_haunted_wasteland;
 mod day09_mirage_maintenance;
+mod day10_pipe_maze;
 
 mod utils;
 
@@ -56,6 +57,7 @@ fn main() {
             "day09_2",
             &day09_mirage_maintenance::Day09_2 as &dyn Solution,
         ),
+        ("day10_1", &day10_pipe_maze::Day10_1 as &dyn Solution),
     ]
     .iter()
     .cloned()
