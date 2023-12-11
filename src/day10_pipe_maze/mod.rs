@@ -1,7 +1,11 @@
 use crate::utils::Solution;
 use itertools::Itertools;
+use std::collections::HashSet;
+
 use std::ops::Div;
+
 pub struct Day10_1;
+pub struct Day10_2;
 
 fn find_s(grid: &[Vec<char>]) -> ((usize, usize), char) {
     for (i, row) in grid.iter().enumerate() {
@@ -23,13 +27,12 @@ fn find_s(grid: &[Vec<char>]) -> ((usize, usize), char) {
     panic!("S not found.")
 }
 
-fn solve1(grid: &[Vec<char>]) -> usize {
+fn find_pipes(grid: &[Vec<char>]) -> Vec<(usize, usize)> {
     let ((mut i, mut j), mut dir) = find_s(grid);
-
-    for n in 1.. {
+    let mut pipe_seq = Vec::new();
+    loop {
         let c = grid[i][j];
-        println!("{c} {dir} ({i}, {j})");
-
+        pipe_seq.push((i, j));
         dir = match (c, dir) {
             ('S', _) => 's',
             ('-', dir) => dir,
@@ -45,7 +48,7 @@ fn solve1(grid: &[Vec<char>]) -> usize {
             e => panic!("Invalid combo at {:?}", e),
         };
         if dir == 's' {
-            return n;
+            return pipe_seq;
         }
         (i, j) = match dir {
             'd' => (i + 1, j),
@@ -55,7 +58,101 @@ fn solve1(grid: &[Vec<char>]) -> usize {
             _ => panic!("lol"),
         }
     }
-    panic!("This can't happen.")
+}
+
+fn find_area(grid: &[Vec<char>]) -> u32 {
+    // Note this doesn't work if the top left square is the S coordinate.
+    let pipe_coords = find_pipes(grid);
+    let (i, j) = *pipe_coords
+        .iter()
+        .filter(|(i, j)| grid[*i][*j] == 'F')
+        .min()
+        .unwrap();
+    println!("F coord: {} {}", i, j);
+
+    // By flood fill.
+    let mut area = 0;
+    let mut stack = vec![((i, j), 'u')];
+    let mut visited: HashSet<(usize, usize)> = HashSet::new();
+    while let Some(((i, j), d)) = stack.pop() {
+        if visited.contains(&(i, j)) {
+            continue;
+        }
+        visited.insert((i, j));
+        if pipe_coords.contains(&(i, j)) {
+            match (grid[i][j], d) {
+                ('S', _) => {} // NOOP
+                ('-', 'u') => {
+                    stack.push(((i, j + 1), 'u'));
+                    stack.push(((i, j - 1), 'u'));
+                    stack.push(((i + 1, j), 'd'));
+                }
+                ('-', 'd') => {
+                    stack.push(((i, j + 1), 'd'));
+                    stack.push(((i, j - 1), 'd'));
+                    stack.push(((i - 1, j), 'u'));
+                }
+                ('|', 'r') => {
+                    stack.push(((i + 1, j), 'r'));
+                    stack.push(((i - 1, j), 'r'));
+                    stack.push(((i, j - 1), 'l'));
+                }
+                ('|', 'l') => {
+                    stack.push(((i + 1, j), 'l'));
+                    stack.push(((i - 1, j), 'l'));
+                    stack.push(((i, j + 1), 'r'));
+                }
+                ('L', 'u') | ('L', 'r') => {
+                    stack.push(((i - 1, j), 'r'));
+                    stack.push(((i, j + 1), 'u'));
+                    stack.push(((i, j - 1), 'l'));
+                    stack.push(((i + 1, j), 'd'));
+                }
+                ('L', 'd') | ('L', 'l') => {
+                    stack.push(((i - 1, j), 'l'));
+                    stack.push(((i, j + 1), 'd'));
+                }
+                ('J', 'u') | ('J', 'l') => {
+                    stack.push(((i - 1, j), 'l'));
+                    stack.push(((i, j - 1), 'u'));
+                    stack.push(((i, j + 1), 'r'));
+                    stack.push(((i + 1, j), 'd'));
+                }
+                ('J', 'd') | ('J', 'r') => {
+                    stack.push(((i - 1, j), 'r'));
+                    stack.push(((i, j - 1), 'd'));
+                }
+                ('7', 'd') | ('7', 'l') => {
+                    stack.push(((i - 1, j), 'u'));
+                    stack.push(((i, j - 1), 'd'));
+                    stack.push(((i, j + 1), 'r'));
+                    stack.push(((i + 1, j), 'l'));
+                }
+                ('7', 'u') | ('7', 'r') => {
+                    stack.push(((i + 1, j), 'r'));
+                    stack.push(((i, j - 1), 'u'));
+                }
+                ('F', 'd') | ('F', 'r') => {
+                    stack.push(((i - 1, j), 'u'));
+                    stack.push(((i, j - 1), 'l'));
+                    stack.push(((i, j + 1), 'd'));
+                    stack.push(((i + 1, j), 'r'));
+                }
+                ('F', 'l') | ('F', 'u') => {
+                    stack.push(((i + 1, j), 'l'));
+                    stack.push(((i, j + 1), 'u'));
+                }
+                (c, d) => panic!("{} {} invalid combo", c, d),
+            };
+        } else {
+            stack.push(((i - 1, j), 'u'));
+            stack.push(((i, j - 1), 'l'));
+            stack.push(((i, j + 1), 'r'));
+            stack.push(((i + 1, j), 'd'));
+        }
+        area += 1;
+    }
+    area
 }
 
 impl Solution for Day10_1 {
@@ -67,6 +164,23 @@ impl Solution for Day10_1 {
             .iter()
             .map(|line| line.chars().collect_vec())
             .collect_vec();
-        solve1(&grid).div(2).to_string()
+        find_pipes(&grid).len().div(2).to_string()
+    }
+}
+
+impl Solution for Day10_2 {
+    fn name(&self) -> &str {
+        "day10_pipe_maze"
+    }
+    fn solve(&self, lines: &[String]) -> String {
+        let grid = lines
+            .iter()
+            .map(|line| line.chars().collect_vec())
+            .collect_vec();
+        let total_area = find_area(&grid);
+        let pipe_len = find_pipes(&grid).len() as u32;
+        println!("total area: {}", total_area);
+        println!("pipes: {}", pipe_len);
+        (total_area - pipe_len).to_string()
     }
 }

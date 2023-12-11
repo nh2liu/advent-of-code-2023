@@ -58,6 +58,7 @@ fn main() {
             &day09_mirage_maintenance::Day09_2 as &dyn Solution,
         ),
         ("day10_1", &day10_pipe_maze::Day10_1 as &dyn Solution),
+        ("day10_2", &day10_pipe_maze::Day10_2 as &dyn Solution),
     ]
     .iter()
     .cloned()
