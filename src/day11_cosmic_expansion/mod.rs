@@ -1,6 +1,7 @@
 use crate::utils::Solution;
 use itertools::Itertools;
 pub struct Day11_1;
+pub struct Day11_2;
 
 fn find_expanded_rows_cols(grid: &[Vec<char>]) -> (Vec<usize>, Vec<usize>) {
     let expanded_rows = grid
@@ -39,6 +40,34 @@ fn count_between(x1: usize, x2: usize, v: &[usize]) -> usize {
         .count()
 }
 
+fn solve(grid: &[Vec<char>], expansion_mult: usize) -> usize {
+    let (erows, ecols) = find_expanded_rows_cols(grid);
+    println!("Rows expanded: {:?}", erows);
+    println!("Cols expanded: {:?}", ecols);
+
+    let galaxies = find_galaxies(grid);
+    let mut sum = 0;
+    for ((i1, (y1, x1)), (i2, (y2, x2))) in galaxies
+        .into_iter()
+        .enumerate()
+        .tuple_combinations::<((usize, (usize, usize)), (usize, (usize, usize)))>()
+    {
+        let dx = (x1).abs_diff(x2);
+        let dx_add = count_between(x1, x2, &ecols);
+        let dy = (y1).abs_diff(y2);
+        let dy_add = count_between(y1, y2, &erows);
+
+        let d = dx + dy + (dx_add + dy_add) * (expansion_mult - 1);
+        println!(
+            "{i1} to {i2} | {:?} to {:?} | ({dx} + {dx_add}, {dy} + {dy_add}) = {d}",
+            (x1, y1),
+            (x2, y2)
+        );
+        sum += d;
+    }
+    sum
+}
+
 impl Solution for Day11_1 {
     fn name(&self) -> &str {
         "day11_cosmic_expansion"
@@ -48,30 +77,19 @@ impl Solution for Day11_1 {
             .iter()
             .map(|line| line.chars().collect_vec())
             .collect_vec();
-        let (erows, ecols) = find_expanded_rows_cols(&grid);
-        println!("Rows expanded: {:?}", erows);
-        println!("Cols expanded: {:?}", ecols);
+        solve(&grid, 2).to_string()
+    }
+}
 
-        let galaxies = find_galaxies(&grid);
-        let mut sum = 0;
-        for ((i1, (y1, x1)), (i2, (y2, x2))) in galaxies
-            .into_iter()
-            .enumerate()
-            .tuple_combinations::<((usize, (usize, usize)), (usize, (usize, usize)))>()
-        {
-            let dx = (x1).abs_diff(x2);
-            let dx_add = count_between(x1, x2, &ecols);
-            let dy = (y1).abs_diff(y2);
-            let dy_add = count_between(y1, y2, &erows);
-
-            let d = dx + dy + dx_add + dy_add;
-            println!(
-                "{i1} to {i2} | {:?} to {:?} | ({dx} + {dx_add}, {dy} + {dy_add}) = {d}",
-                (x1, y1),
-                (x2, y2)
-            );
-            sum += d;
-        }
-        sum.to_string()
+impl Solution for Day11_2 {
+    fn name(&self) -> &str {
+        "day11_cosmic_expansion"
+    }
+    fn solve(&self, lines: &[String]) -> String {
+        let grid = lines
+            .iter()
+            .map(|line| line.chars().collect_vec())
+            .collect_vec();
+        solve(&grid, 1_000_000).to_string()
     }
 }
