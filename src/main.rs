@@ -9,6 +9,7 @@ mod day08_haunted_wasteland;
 mod day09_mirage_maintenance;
 mod day10_pipe_maze;
 mod day11_cosmic_expansion;
+mod day12_hot_springs;
 
 mod utils;
 
@@ -62,6 +63,7 @@ fn main() {
         ("day10_2", &day10_pipe_maze::Day10_2 as &dyn Solution),
         ("day11_1", &day11_cosmic_expansion::Day11_1 as &dyn Solution),
         ("day11_2", &day11_cosmic_expansion::Day11_2 as &dyn Solution),
+        ("day12_1", &day12_hot_springs::Day12_1 as &dyn Solution),
     ]
     .iter()
     .cloned()
