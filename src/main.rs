@@ -64,6 +64,7 @@ fn main() {
         ("day11_1", &day11_cosmic_expansion::Day11_1 as &dyn Solution),
         ("day11_2", &day11_cosmic_expansion::Day11_2 as &dyn Solution),
         ("day12_1", &day12_hot_springs::Day12_1 as &dyn Solution),
+        ("day12_2", &day12_hot_springs::Day12_2 as &dyn Solution),
     ]
     .iter()
     .cloned()
