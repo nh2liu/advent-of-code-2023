@@ -70,6 +70,10 @@ fn main() {
             "day13_1",
             &day13_point_of_incidence::Day13_1 as &dyn Solution,
         ),
+        (
+            "day13_2",
+            &day13_point_of_incidence::Day13_2 as &dyn Solution,
+        ),
     ]
     .iter()
     .cloned()
