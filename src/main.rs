@@ -76,6 +76,7 @@ fn main() {
             &day13_point_of_incidence::Day13_2 as &dyn Solution,
         ),
         ("day14_1", &day14_parabolic_dish::Day14_1 as &dyn Solution),
+        ("day14_2", &day14_parabolic_dish::Day14_2 as &dyn Solution),
     ]
     .iter()
     .cloned()
