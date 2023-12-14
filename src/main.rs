@@ -11,6 +11,7 @@ mod day10_pipe_maze;
 mod day11_cosmic_expansion;
 mod day12_hot_springs;
 mod day13_point_of_incidence;
+mod day14_parabolic_dish;
 
 mod utils;
 
@@ -74,6 +75,7 @@ fn main() {
             "day13_2",
             &day13_point_of_incidence::Day13_2 as &dyn Solution,
         ),
+        ("day14_1", &day14_parabolic_dish::Day14_1 as &dyn Solution),
     ]
     .iter()
     .cloned()
