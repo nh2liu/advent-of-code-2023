@@ -82,6 +82,7 @@ fn main() {
         ("day15_1", &day15_lens_library::Day15_1 as &dyn Solution),
         ("day15_2", &day15_lens_library::Day15_2 as &dyn Solution),
         ("day16_1", &day16_lava_floor::Day16_1 as &dyn Solution),
+        ("day16_2", &day16_lava_floor::Day16_2 as &dyn Solution),
     ]
     .iter()
     .cloned()
