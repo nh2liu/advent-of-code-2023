@@ -85,6 +85,7 @@ fn main() {
         ("day16_1", &day16_lava_floor::Day16_1 as &dyn Solution),
         ("day16_2", &day16_lava_floor::Day16_2 as &dyn Solution),
         ("day17_1", &day17_clumsy_crucible::Day17_1 as &dyn Solution),
+        ("day17_2", &day17_clumsy_crucible::Day17_2 as &dyn Solution),
     ]
     .iter()
     .cloned()
