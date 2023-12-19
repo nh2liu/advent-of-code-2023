@@ -2,6 +2,7 @@ use crate::utils::Solution;
 use itertools::Itertools;
 
 pub struct Day18_1;
+pub struct Day18_2;
 
 fn parse_instr(lines: &[String]) -> Vec<(char, isize, &str)> {
     lines
@@ -47,6 +48,32 @@ impl Solution for Day18_1 {
             instrs
                 .into_iter()
                 .map(|(dir, mag, _)| (dir, mag))
+                .collect_vec(),
+        )
+        .to_string()
+    }
+}
+
+impl Solution for Day18_2 {
+    fn name(&self) -> &str {
+        "day18_lavaduct_lagoon"
+    }
+    fn solve(&self, lines: &[String]) -> String {
+        let instrs = parse_instr(lines);
+        shoelace(
+            instrs
+                .into_iter()
+                .map(|(_, _, hex)| {
+                    let dir = match hex.chars().nth(hex.len() - 2).unwrap() {
+                        '0' => 'R',
+                        '1' => 'D',
+                        '2' => 'L',
+                        '3' => 'U',
+                        e => panic!("not valid dir {e}"),
+                    };
+                    let mag = isize::from_str_radix(&hex[2..hex.len() - 2], 16).unwrap();
+                    (dir, mag)
+                })
                 .collect_vec(),
         )
         .to_string()
