@@ -15,6 +15,7 @@ mod day14_parabolic_dish;
 mod day15_lens_library;
 mod day16_lava_floor;
 mod day17_clumsy_crucible;
+mod day18_lavaduct_lagoon;
 
 mod utils;
 
@@ -86,6 +87,7 @@ fn main() {
         ("day16_2", &day16_lava_floor::Day16_2 as &dyn Solution),
         ("day17_1", &day17_clumsy_crucible::Day17_1 as &dyn Solution),
         ("day17_2", &day17_clumsy_crucible::Day17_2 as &dyn Solution),
+        ("day18_1", &day18_lavaduct_lagoon::Day18_1 as &dyn Solution),
     ]
     .iter()
     .cloned()
