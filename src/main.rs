@@ -91,6 +91,7 @@ fn main() {
         ("day18_1", &day18_lavaduct_lagoon::Day18_1 as &dyn Solution),
         ("day18_2", &day18_lavaduct_lagoon::Day18_2 as &dyn Solution),
         ("day19_1", &day19_aplenty::Day19_1 as &dyn Solution),
+        ("day19_2", &day19_aplenty::Day19_2 as &dyn Solution),
     ]
     .iter()
     .cloned()
