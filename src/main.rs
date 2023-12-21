@@ -17,6 +17,7 @@ mod day16_lava_floor;
 mod day17_clumsy_crucible;
 mod day18_lavaduct_lagoon;
 mod day19_aplenty;
+mod day20_pulse_propagation;
 
 mod utils;
 
@@ -92,6 +93,10 @@ fn main() {
         ("day18_2", &day18_lavaduct_lagoon::Day18_2 as &dyn Solution),
         ("day19_1", &day19_aplenty::Day19_1 as &dyn Solution),
         ("day19_2", &day19_aplenty::Day19_2 as &dyn Solution),
+        (
+            "day20_1",
+            &day20_pulse_propagation::Day20_1 as &dyn Solution,
+        ),
     ]
     .iter()
     .cloned()
