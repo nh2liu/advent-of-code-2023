@@ -97,6 +97,10 @@ fn main() {
             "day20_1",
             &day20_pulse_propagation::Day20_1 as &dyn Solution,
         ),
+        (
+            "day20_2",
+            &day20_pulse_propagation::Day20_2 as &dyn Solution,
+        ),
     ]
     .iter()
     .cloned()

@@ -1,68 +1,71 @@
 use std::collections::{HashMap, VecDeque};
 
 use itertools::Itertools;
+use num::integer::lcm;
 
 use crate::utils::Solution;
 pub struct Day20_1;
+pub struct Day20_2;
 
+#[derive(Clone)]
 enum PulseNode<'a> {
     Normal,
     FlipFlop { state: bool },
     Conjunction { inputs: HashMap<&'a str, bool> },
 }
-
+#[derive(Clone)]
 struct PulseGraph<'a> {
     neighbor_graph: HashMap<&'a str, Vec<&'a str>>,
     states: HashMap<&'a str, PulseNode<'a>>,
 }
 
 impl<'a> PulseGraph<'a> {
-    fn push(&'a mut self, n: usize) -> (usize, usize) {
-        let mut cum_low = 0;
-        let mut cum_high = 0;
-        for _ in 0..n {
-            let mut lowc = 1;
-            let mut highc = 0;
-            let mut q: VecDeque<(&'a str, &'a str, bool)> =
-                VecDeque::from([("button", "broadcaster", false)]);
-            while let Some((prev, cur, is_high)) = q.pop_front() {
-                println!("{prev} -> {cur} | {is_high}");
-                let mut send_to_neighbors = |cur_node, neighbors: &'a [&str], is_high| {
-                    if is_high {
-                        highc += neighbors.len();
-                    } else {
-                        lowc += neighbors.len();
-                    }
-                    neighbors
-                        .iter()
-                        .for_each(|n| q.push_back((cur_node, n, is_high)))
-                };
-                if !self.states.contains_key(cur) {
-                    // terminal
-                    continue;
+    fn push(&mut self, catch: Option<&str>) -> ((usize, usize), bool) {
+        let mut lowc = 1;
+        let mut highc = 0;
+        let mut q: VecDeque<(&'a str, &'a str, bool)> =
+            VecDeque::from([("button", "broadcaster", false)]);
+
+        let mut high_fired = false;
+        while let Some((prev, cur, is_high)) = q.pop_front() {
+            if let Some(x) = catch {
+                if x == prev && is_high {
+                    high_fired = true;
                 }
-                let pn = self.states.get_mut(cur).unwrap();
-                let neighbors = &self.neighbor_graph[cur];
-                match pn {
-                    PulseNode::Normal => {
-                        send_to_neighbors(cur, neighbors, is_high);
-                    }
-                    PulseNode::Conjunction { ref mut inputs } => {
-                        inputs.insert(prev, is_high);
-                        send_to_neighbors(cur, neighbors, !inputs.values().all(|&x| x));
-                    }
-                    PulseNode::FlipFlop { ref mut state } => {
-                        if !is_high {
-                            *state = !*state;
-                            send_to_neighbors(cur, neighbors, *state);
-                        }
-                    }
-                };
             }
-            cum_low += lowc;
-            cum_high += highc;
+            let mut send_to_neighbors = |cur_node, neighbors: &[&'a str], is_high| {
+                if is_high {
+                    highc += neighbors.len();
+                } else {
+                    lowc += neighbors.len();
+                }
+                neighbors
+                    .iter()
+                    .for_each(|n| q.push_back((cur_node, n, is_high)))
+            };
+            if !self.states.contains_key(cur) {
+                // terminal
+                continue;
+            }
+            let pn = self.states.get_mut(cur).unwrap();
+            let neighbors = &self.neighbor_graph[cur];
+            match pn {
+                PulseNode::Normal => {
+                    send_to_neighbors(cur, neighbors, is_high);
+                }
+                PulseNode::Conjunction { ref mut inputs } => {
+                    inputs.insert(prev, is_high);
+                    send_to_neighbors(cur, neighbors, !inputs.values().all(|&x| x));
+                }
+                PulseNode::FlipFlop { ref mut state } => {
+                    if !is_high {
+                        *state = !*state;
+                        send_to_neighbors(cur, neighbors, *state);
+                    }
+                }
+            };
         }
-        (cum_low, cum_high)
+        ((lowc, highc), high_fired)
     }
 }
 
@@ -116,8 +119,46 @@ impl Solution for Day20_1 {
     }
     fn solve(&self, lines: &[String]) -> String {
         let mut g = parse(lines);
-        let (lowc, highc) = g.push(1000);
-        println!("Low count: {lowc} | High count: {highc}");
-        (lowc * highc).to_string()
+        let mut cum_low = 0;
+        let mut cum_high = 0;
+        for _ in 0..1000 {
+            let (count, _) = g.push(None);
+            cum_low += count.0;
+            cum_high += count.1;
+        }
+        println!("Low count: {cum_low} | High count: {cum_high}");
+        (cum_low * cum_high).to_string()
+    }
+}
+
+impl Solution for Day20_2 {
+    fn name(&self) -> &str {
+        "day20_pulse_propagation"
+    }
+    fn solve(&self, lines: &[String]) -> String {
+        let g = parse(lines);
+
+        let in_nodes = if let PulseNode::Conjunction { inputs } = &g.states["sq"] {
+            inputs.keys().cloned().collect_vec()
+        } else {
+            panic!("sq not valid.")
+        };
+        println!("{in_nodes:?}");
+
+        let cycles = in_nodes
+            .iter()
+            .map(|x| {
+                let mut tg = g.clone();
+                for i in 1i64.. {
+                    let (_, high_fired) = tg.push(Some(x));
+                    if high_fired {
+                        println!("{x} {i}");
+                        return i;
+                    }
+                }
+                panic!("must return");
+            })
+            .collect_vec();
+        cycles.into_iter().reduce(lcm).unwrap().to_string()
     }
 }
