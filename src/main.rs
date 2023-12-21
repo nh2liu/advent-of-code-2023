@@ -18,6 +18,7 @@ mod day17_clumsy_crucible;
 mod day18_lavaduct_lagoon;
 mod day19_aplenty;
 mod day20_pulse_propagation;
+mod day21_step_counter;
 
 mod utils;
 
@@ -101,6 +102,7 @@ fn main() {
             "day20_2",
             &day20_pulse_propagation::Day20_2 as &dyn Solution,
         ),
+        ("day21_1", &day21_step_counter::Day21_1 as &dyn Solution),
     ]
     .iter()
     .cloned()
