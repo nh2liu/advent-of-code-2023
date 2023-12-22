@@ -103,6 +103,7 @@ fn main() {
             &day20_pulse_propagation::Day20_2 as &dyn Solution,
         ),
         ("day21_1", &day21_step_counter::Day21_1 as &dyn Solution),
+        ("day21_2", &day21_step_counter::Day21_2 as &dyn Solution),
     ]
     .iter()
     .cloned()
