@@ -106,6 +106,7 @@ fn main() {
         ("day21_1", &day21_step_counter::Day21_1 as &dyn Solution),
         ("day21_2", &day21_step_counter::Day21_2 as &dyn Solution),
         ("day22_1", &day22_sand_slabs::Day22_1 as &dyn Solution),
+        ("day22_2", &day22_sand_slabs::Day22_2 as &dyn Solution),
     ]
     .iter()
     .cloned()

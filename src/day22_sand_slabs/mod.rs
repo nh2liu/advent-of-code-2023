@@ -1,8 +1,9 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashMap, HashSet, VecDeque};
 
 use crate::utils::Solution;
 use itertools::Itertools;
 pub struct Day22_1;
+pub struct Day22_2;
 
 #[derive(Clone, Debug)]
 struct Brick {
@@ -96,5 +97,74 @@ impl Solution for Day22_1 {
             })
             .sum::<usize>();
         n_safe.to_string()
+    }
+}
+
+fn brick_falling(
+    in_graph: &HashMap<usize, Vec<usize>>,
+    out_graph: &HashMap<usize, Vec<usize>>,
+    start_node: usize,
+) -> usize {
+    let mut q = VecDeque::from([start_node]);
+    let mut visited = HashSet::new();
+    let mut broken = HashSet::from([start_node]);
+    while let Some(node) = q.pop_front() {
+        if visited.contains(&node) {
+            continue;
+        }
+        visited.insert(node);
+        let supporting = &out_graph[&node];
+        supporting.iter().for_each(|&x| {
+            if in_graph[&x].iter().all(|y| broken.contains(y)) {
+                broken.insert(x);
+                q.push_back(x);
+            }
+        })
+    }
+    broken.len() - 1
+}
+
+fn find_cycle(out_graph: &HashMap<usize, Vec<usize>>) -> bool {
+    fn helper(
+        g: &HashMap<usize, Vec<usize>>,
+        cur_node: usize,
+        path_so_far: &mut Vec<usize>,
+    ) -> bool {
+        if path_so_far.contains(&cur_node) {
+            return true;
+        }
+        path_so_far.push(cur_node);
+        for &node in g[&cur_node].iter() {
+            if helper(g, node, path_so_far) {
+                return true;
+            }
+        }
+        path_so_far.pop();
+        false
+    }
+    out_graph.keys().all(|&x| helper(out_graph, x, &mut vec![]))
+}
+
+impl Solution for Day22_2 {
+    fn name(&self) -> &str {
+        "day22_sand_slabs"
+    }
+    fn solve(&self, lines: &[String]) -> String {
+        let bricks = parse(lines);
+        let (in_graph, out_graph) = construct_graph(&bricks);
+        let has_cycle = find_cycle(&out_graph);
+        if has_cycle {
+            panic!("Wrong has cycle.");
+        }
+
+        // println!("In Graph: {in_graph:?}");
+        // println!("Out Graph: {out_graph:?}");
+
+        let total = out_graph
+            .keys()
+            .sorted()
+            .map(|&start_node| brick_falling(&in_graph, &out_graph, start_node))
+            .sum::<usize>();
+        total.to_string()
     }
 }
