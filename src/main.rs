@@ -20,6 +20,7 @@ mod day19_aplenty;
 mod day20_pulse_propagation;
 mod day21_step_counter;
 mod day22_sand_slabs;
+mod day23_a_long_walk;
 
 mod utils;
 
@@ -107,6 +108,7 @@ fn main() {
         ("day21_2", &day21_step_counter::Day21_2 as &dyn Solution),
         ("day22_1", &day22_sand_slabs::Day22_1 as &dyn Solution),
         ("day22_2", &day22_sand_slabs::Day22_2 as &dyn Solution),
+        ("day23_1", &day23_a_long_walk::Day23_1 as &dyn Solution),
     ]
     .iter()
     .cloned()
