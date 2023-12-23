@@ -50,12 +50,11 @@ fn construct_graph(bricks: &[Brick]) -> (HashMap<usize, Vec<usize>>, HashMap<usi
     let mut out_graph = HashMap::new();
 
     for brick in sorted_bricks {
-        println!("{} {:?}", brick.id, grid);
         out_graph.insert(brick.id, vec![]);
         let mut max_height = 0;
         let mut adj = HashSet::new();
         for row in grid.iter().take(brick.c1.0 + 1).skip(brick.c0.0) {
-            for &(cell_height, brid) in row {
+            for &(cell_height, brid) in row.iter().take(brick.c1.1 + 1).skip(brick.c0.1) {
                 if cell_height > max_height {
                     max_height = cell_height;
                     adj.clear();
@@ -74,7 +73,6 @@ fn construct_graph(bricks: &[Brick]) -> (HashMap<usize, Vec<usize>>, HashMap<usi
                 *v = (max_height + brick.height(), brick.id);
             }
         }
-        println!("{} {:?}", brick.id, grid);
     }
     (in_graph, out_graph)
 }
@@ -86,8 +84,8 @@ impl Solution for Day22_1 {
     fn solve(&self, lines: &[String]) -> String {
         let bricks = parse(lines);
         let (in_graph, out_graph) = construct_graph(&bricks);
-        println!("In Graph: {in_graph:?}");
-        println!("Out Graph: {out_graph:?}");
+        // println!("In Graph: {in_graph:?}");
+        // println!("Out Graph: {out_graph:?}");
         let n_safe = out_graph
             .iter()
             .sorted_by_key(|x| x.0)
